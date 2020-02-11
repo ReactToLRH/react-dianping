@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Slider from 'react-slick';
 import './style.css';
-import { dataSource } from './categoryData';
+import { dataMock } from './dataMock';
 
-const categoryDataSource = dataSource;
+const categoryDataSource = dataMock;
 
 class Category extends Component {
   render() {

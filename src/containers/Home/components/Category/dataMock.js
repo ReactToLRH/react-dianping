@@ -1,4 +1,4 @@
-export const dataSource = [
+export const dataMock = [
   [{
       name: "猫眼电影",
       src: "https://www.dpfile.com/sc/eleconfig/20170223152109dp_wx_maoyan_icon.png"
