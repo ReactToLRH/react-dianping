@@ -6,6 +6,8 @@
 
 ## 使用模块
 
++ [react-slick](https://react-slick.neostack.com/): React轮播组件(react-slick样式库：`slick-carousel`)
+
 ## 目录结构
 
 ``` txt
