@@ -24,6 +24,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    // bindActionCreators() 可以⾃动把多个 action 创建函数 绑定到dispatch() ⽅法上。
     appActions: bindActionCreators(appActions, dispatch)
   };
 };
