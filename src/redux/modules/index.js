@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 import entities from './entities';
 import home from './home';
-import details from './details';
+import detail from './detail';
 import app from './app';
 
 const rootReducer = combineReducers({
   entities,
   home,
-  details,
+  detail,
   app
 });
 
