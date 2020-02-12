@@ -8,7 +8,6 @@ class PopularSearch extends Component {
       <div className="popularSearch">
         {
           data.map((item, index) => {
-            console.log('PopularSearch item', item)
             return (
               <span 
                 key={item.id} 

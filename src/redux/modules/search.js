@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import url from "../../utils/url";
 import { FETCH_DATA } from "../middleware/api";
 import { schema as keywordSchema, getKeywordById } from "./entities/keywords";
+import { schema as shopSchema, getShopById } from "./entities/shops";
 
 export const types = {
   //获取热门关键词
@@ -17,7 +18,11 @@ export const types = {
   CLEAR_INPUT_TEXT: "SEARCH/CLEAR_INPUT_TEXT",
   // 历史查询记录
   ADD_HISTORY_KEYWORD: "SEARCH/ADD_HISTORY_KEYWORD",
-  CLEAR_HISTORY_KEYWORDS: "SEARCH/CLEAR_HISTORY_KEYWORDS"
+  CLEAR_HISTORY_KEYWORDS: "SEARCH/CLEAR_HISTORY_KEYWORDS",
+  // 根据关键词查询结果
+  FETCH_SHOPS_REQUEST: "SEARCH/FETCH_SHOPS_REQUEST",
+  FETCH_SHOPS_SUCCESS: "SEARCH/FETCH_SHOPS_SUCCESS",
+  FETCH_SHOPS_FAILURE: "SEARCH/FETCH_SHOPS_FAILURE",
 };
 
 const initialState = {
@@ -27,7 +32,7 @@ const initialState = {
     ids: []
   },
   /**
-   * relatedKeywords 对象结构：
+   * relatedKeywords对象结构：
    * {
    *   '火锅': {
    *       isFetching: false,
@@ -36,14 +41,23 @@ const initialState = {
    * }
    */
   relatedKeywords: {},
-  historyKeywords: [] //保存关键词id
+  historyKeywords: [], //保存关键词id
+  /**
+   * searchedShopsByKeywords结构
+   * {
+   *   'keywordId': {
+   *       isFetching: false,
+   *       ids: []
+   *    }
+   * }
+   */
+  searchedShopsByKeyword: {}
 };
 
 export const actions = {
   //获取热门关键词
   loadPopularKeywords: () => {
     return (dispatch, getState) => {
-      console.log('getState().search', getState().search)
       const { ids } = getState().search.popularKeywords;
       if (ids.length > 0) {
         return null;
@@ -62,6 +76,17 @@ export const actions = {
       const endpoint = url.getRelatedKeywords(text);
       return dispatch(fetchRelatedKeywords(text, endpoint));
     };
+  },
+  // 获取查询到的店铺列表
+  loadRelatedShops: keyword => {
+    return (dispatch, getState) => {
+      const { searchedShopsByKeyword } = getState().search;
+      if(searchedShopsByKeyword[keyword]) {
+        return null
+      }
+      const endpoint = url.getRelatedShops(keyword);
+      return dispatch(fetchRelatedShops(keyword, endpoint));
+    }
   },
   //搜索框输入文本相关action
   setInputText: text => ({
@@ -106,6 +131,19 @@ const fetchRelatedKeywords = (text, endpoint) => ({
   text
 });
 
+const fetchRelatedShops = (text, endpoint) => ({
+  [FETCH_DATA]: {
+    types: [
+      types.FETCH_SHOPS_REQUEST,
+      types.FETCH_SHOPS_SUCCESS,
+      types.FETCH_SHOPS_FAILURE
+    ],
+    endpoint,
+    schema: shopSchema
+  },
+  text
+})
+
 // reducers
 const popularKeywords = (state = initialState.popularKeywords, action) => {
   switch (action.type) {
@@ -141,7 +179,10 @@ const relatedKeywords = (state = initialState.relatedKeywords, action) => {
   }
 };
 
-const relatedKeywordsByText = ( state = { isFetching: false, ids: [] }, action) => {
+const relatedKeywordsByText = (
+  state = { isFetching: false, ids: [] },
+  action
+) => {
   switch (action.type) {
     case types.FETCH_RELATED_KEYWORDS_REQUEST:
       return { ...state, isFetching: true };
@@ -152,6 +193,40 @@ const relatedKeywordsByText = ( state = { isFetching: false, ids: [] }, action) 
         ids: state.ids.concat(action.response.ids)
       };
     case types.FETCH_RELATED_KEYWORDS_FAILURE:
+      return { ...state, isFetching: false };
+    default:
+      return state;
+  }
+};
+
+const searchedShopsByKeyword = (state = initialState.searchedShopsByKeyword, action) => {
+  switch (action.type) {
+    case types.FETCH_SHOPS_REQUEST:
+    case types.FETCH_SHOPS_SUCCESS:
+    case types.FETCH_SHOPS_FAILURE:
+      return {
+        ...state,
+        [action.text]: searchedShops(state[action.text], action)
+      };
+    default:
+      return state;
+  }
+};
+
+const searchedShops = (
+  state = { isFetching: false, ids: [] },
+  action
+) => {
+  switch (action.type) {
+    case types.FETCH_SHOPS_REQUEST:
+      return { ...state, isFetching: true };
+    case types.FETCH_SHOPS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        ids: action.response.ids
+      };
+    case types.FETCH_SHOPS_FAILURE:
       return { ...state, isFetching: false };
     default:
       return state;
@@ -190,10 +265,12 @@ const reducer = combineReducers({
   popularKeywords,
   relatedKeywords,
   inputText,
-  historyKeywords
+  historyKeywords,
+  searchedShopsByKeyword
 })
 
 export default reducer;
+
 
 // selectors
 export const getPopularKeywords = state => {
@@ -224,4 +301,25 @@ export const getHistoryKeywords = state => {
   return state.search.historyKeywords.map(id => {
     return getKeywordById(state, id)
   })
+}
+
+// 获取店铺列表
+export const getSearchedShops = state => {
+  const keywordId = state.search.historyKeywords[0];
+  if(!keywordId) {
+    return [];
+  }
+  const shops = state.search.searchedShopsByKeyword[keywordId];
+  return shops.ids.map(id => {
+    return getShopById(state, id);
+  })
+}
+
+// 获取当前关键词
+export const getCurrentKeyword = state => {
+  const keywordId = state.search.historyKeywords[0];
+  if(!keywordId) {
+    return ""
+  }
+  return getKeywordById(state, keywordId).keyword;
 }

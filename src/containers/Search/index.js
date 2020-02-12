@@ -69,10 +69,11 @@ class Search extends Component {
 
   // 处理点击关键词的逻辑
   handleClickItem = item => {
-    const { setInputText, addHistoryKeyword } = this.props.searchActions
+    const { setInputText, addHistoryKeyword, loadRelatedShops } = this.props.searchActions
     setInputText(item.keyword)
     addHistoryKeyword(item.id)
-    // 跳转搜索结果页逻辑 todo
+    loadRelatedShops(item.id)
+    this.props.history.push("/search_result")
   }
 
   // 清除历史记录
@@ -88,7 +89,6 @@ class Search extends Component {
 }
 
 const mapStateToProps = (state, props) => {
-  console.log('search mapStateToProps', state)
   return {
     relatedKeywords: getRelatedKeywords(state),
     inputText: getInputText(state),
