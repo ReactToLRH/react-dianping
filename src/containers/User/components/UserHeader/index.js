@@ -6,7 +6,9 @@ class UserHeader extends Component {
     const { onBack, onLogout } = this.props;
     return (
       <header className="userHeader">
-        <div className="userHeader__back" onClick={onBack}>首页</div>
+        <div className="userHeader__back" onClick={onBack}>
+          首页
+        </div>
         <div className="userHeader__list">
           <span className="userHeader__item userHeader__item--selected">
             订单

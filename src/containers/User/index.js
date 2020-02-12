@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import UserMain from "./components/UserMain"
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import UserMain from "./containers/UserMain"
 import UserHeader from "./components/UserHeader"
-import { actions as userActions, getOrders, getCurrentTab } from "../../redux/modules/user"
+import { actions as userActions, getOrders, getCurrentTab} from "../../redux/modules/user"
 import { actions as loginActions } from "../../redux/modules/login"
 
 class User extends Component {
   render() {
-    const {currentTab, orders} = this.props
+    const {orders} = this.props
     return (
       <div>
-        <UserHeader 
-          onBack={this.handleBack} 
-          onLogout={this.handleLogout}
-        />
-        <UserMain 
-          currentTab={currentTab} 
-          data={orders} 
-          onSetCurrentTab={this.handleSetCurrentTab} 
-        />
+        <UserHeader onBack={this.handleBack} onLogout={this.handleLogout}/>
+        <UserMain data={orders} />
       </div>
     );
   }
@@ -46,13 +39,13 @@ const mapStateToProps = (state, props) => {
     orders: getOrders(state),
     currentTab: getCurrentTab(state)
   }
-};
+}
 
 const mapDispatchToProps = (dispatch) => {
   return {
     userActions: bindActionCreators(userActions, dispatch),
     loginActions: bindActionCreators(loginActions, dispatch)
   }
-};
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);
