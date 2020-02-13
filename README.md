@@ -1,4 +1,15 @@
-# React16+Redux 大众点评Web App
+# 大众点评Web App
+
+## 项目介绍
+
+本项目使用React+Redux开发大众店铺Web App。项目主要包括首页相关商品展示、商品详情页、搜索页、搜索结果页、登陆页等。
+
+## 如何运行
+
++ 克隆代码：`https://github.com/ReactToLRH/react-dianping.git`
++ 安装依赖：`npm install`
++ 运行：`npm run start`
++ 打包：`npm run build`
 
 ## 基础知识
 
