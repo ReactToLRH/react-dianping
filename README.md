@@ -13,7 +13,8 @@
 
 ## 基础知识
 
-+ [Redux模块](./readme/redux.md)
++ [Redux模块](./readme/redux.md): 模块分层、中间件使用、中间件网络层封装
++ 组件按需加载: [AsyncComponents.js](./src/utils/AsyncComponent.js)
 
 ## 使用模块
 
