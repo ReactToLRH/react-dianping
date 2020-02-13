@@ -10,12 +10,13 @@ import {
   actions as purchaseActions,
   getProduct,
   getQuantity,
-  getTipStatus
+  getTipStatus,
+  getTotalPrice
 } from "../../redux/modules/purchase";
 
 class Purchase extends Component {
   render() {
-    const { product, phone, quantity, showTip } = this.props;
+    const { product, phone, quantity, showTip, totalPrice } = this.props;
     return (
       <div>
         <Header title="下单" onBack={this.handleBack} />
@@ -24,6 +25,7 @@ class Purchase extends Component {
             product={product}
             phone={phone}
             quantity={quantity}
+            totalPrice={totalPrice}
             onSubmit={this.handleSubmit}
             onSetQuantity={this.handleSetQuantity}
           />
@@ -73,7 +75,8 @@ const mapStateToProps = (state, props) => {
     product: getProduct(state, productId),
     quantity: getQuantity(state),
     showTip: getTipStatus(state),
-    phone: getUsername(state)
+    phone: getUsername(state),
+    totalPrice: getTotalPrice(state, productId)
   };
 };
 
